@@ -1,19 +1,22 @@
 {
   "name": "wetube",
   "version": "1.0.0",
-  "description": "",
+  "description": "The best way to watch videos",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kmnkit/wetube.git"
   },
-  "author": "",
+  "scripts": {
+    "win": "node index.js"
+  },
+  "author": "Marco Kang",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/kmnkit/wetube/issues"
   },
-  "homepage": "https://github.com/kmnkit/wetube#readme"
+  "homepage": "https://github.com/kmnkit/wetube#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }

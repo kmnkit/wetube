@@ -1,6 +1,7 @@
 import express from 'express';
+import { join } from '../controllers/userController';
 
 const globalRouter = express.Router();
-globalRouter.get("/", (req, res) => res.send("Global Router Home!"));
+globalRouter.get("/join", join);
 
 export default globalRouter;

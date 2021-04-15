@@ -1,15 +1,28 @@
 const HOME = "/";
 const USERS = "/users";
-const LOGIN = "/login";
+const VIDEOS = "/videos";
 
-"/"
-"/join"
-"/login"
-"/search"
-"/users/edit"
-"/users/delete"
-"/videos/watch"
-"/videos/edit"
-"/videos/delete"
-"/videos/comment"
-"/videos/comments/delete"
+const JOIN = "/join";
+const LOGIN = "/login";
+const SEARCH = "/search";
+
+const EDIT = "/edit";
+const WATCH = "/watch";
+
+const DELETE = "/delete";
+const COMMENT = "/comment";
+
+const routes = {
+    home: HOME,
+    users: USERS,
+    videos: VIDEOS,
+    join: JOIN,
+    login: LOGIN,
+    search: SEARCH,
+    watch: WATCH,
+    edit: EDIT,
+    delete: DELETE,
+    comment: COMMENT,
+}
+
+export default routes;

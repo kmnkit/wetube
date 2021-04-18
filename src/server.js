@@ -18,7 +18,7 @@ app.use("/users", userRouter);
 app.use("/videos", videoRouter);
 
 function handleListening(req, res) {
-    console.log(`Listen on ${PORT} 🚀`);
+    console.log(`🚀 Listen on ${PORT} ✅`);
 }
 
 app.listen(PORT, handleListening);

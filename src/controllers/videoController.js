@@ -1,5 +1,7 @@
 import Video from "../models/Video";
 
+const capitalize = ([firstLetter, ...restOfWords]) => firstLetter.toUpperCase() + restOfWords.join('').toLowerCase();
+
 export const home = async (_, res) => {
     const videos = await Video.find({});
     return res.render("home", { pageTitle: "Home", videos });
@@ -23,8 +25,19 @@ export const getUpload = (_, res) => {
     return res.render("upload", { pageTitle: "Upload Video" });
 };
 
-export const postUpload = (req, res) => {
-    const { body: { title } } = req;
+export const postUpload = async (req, res) => {
+    const { body: { title, description, hashtags } } = req;
+    const video = new Video({
+        title,
+        description,
+        hashtags: hashtags.replace(/(\s*)/g, "").split(",").map(tag => `#${capitalize(tag)}`),
+        createdAt: Date.now(),
+        meta: {
+            views: 0,
+            rating: 0,
+        },
+    });
+    await video.save();
     return res.redirect("/");
 };
 

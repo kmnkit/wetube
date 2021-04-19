@@ -8,7 +8,7 @@
     "url": "git+https://github.com/kmnkit/wetube.git"
   },
   "scripts": {
-    "dev": "nodemon --exec babel-node src/server.js --delay 2"
+    "dev": "nodemon --exec babel-node src/init.js --delay 2"
   },
   "author": "Marco Kang",
   "license": "ISC",

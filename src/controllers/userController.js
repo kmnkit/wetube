@@ -60,10 +60,12 @@ export const postLogin = async (req, res) => {
     if (!ok) {
         return res.status(HTTP_BAD_REQUEST).render("login", {
             pageTitle,
-            errorMessage: "An account with this username does not exists.",
+            errorMessage: "Wrong Password",
         });
     };
-    res.end();
+    req.session.loggedIn = true;
+    req.session.user = user;
+    res.redirect("/");
 };
 export const edit = (req, res) => res.render("edit");
 export const remove = (req, res) => res.render("remove");

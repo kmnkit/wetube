@@ -11,15 +11,15 @@ html(lang="ko")
                 ul
                     li
                         a(href="/") Home
-                    if loggedIn
-                        li
-                            a(href="/logout") Logout
                         li
                             a(href="/search") Search
+                    if loggedIn
                         li
                             a(href="/my-profile") #{loggedInUser.name}의 Profile
                         li
                             a(href="/videos/upload") Upload Video
+                        li
+                            a(href="/users/logout") Logout
                     else
                         li
                             a(href="/join") Join

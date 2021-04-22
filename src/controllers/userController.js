@@ -40,7 +40,10 @@ export const postJoin = async (req, res) => {
         });
     }
 };
-export const getLogin = (_, res) => {
+export const getLogin = (req, res) => {
+    if (req.session.loggedIn) {
+        return res.redirect("/");
+    }
     res.render("login", { pageTitle: "Login" });
 };
 export const postLogin = async (req, res) => {

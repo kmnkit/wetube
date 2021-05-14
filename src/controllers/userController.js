@@ -148,15 +148,22 @@ export const getEdit = (_, res) => {
 export const postEdit = async (req, res) => {
     const {
         session: {
-            user: { _id },
+            user: { _id, email: sessionEmail, username: sessionUsername },
         },
         body: { name, email, username, location }
     } = req;
-    const foundUser = await User.findOne({ $or: [{ username }, { email }] });
-    if (foundUser) {
-        if (foundUser._id !== _id) {
-            return res.status(HTTP_BAD_REQUEST).render("join", {
-                pageTitle,
+    let searchParam = [];
+    if (sessionEmail !== email) {
+        searchParam.push({ email });
+    }
+    if (sessionUsername !== username) {
+        searchParam.push({ username });
+    }
+    if (searchParam.length > 0) {
+        const foundUser = await User.findOne({ $or: searchParam });
+        if (foundUser && foundUser._id.toString() !== _id) {
+            return res.status(HTTP_BAD_REQUEST).render("edit-profile", {
+                pageTitle: "Edit Profile",
                 errorMessage: "This username/email is already taken.",
             });
         }

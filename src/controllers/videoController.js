@@ -1,4 +1,6 @@
+import { compareSync } from "bcrypt";
 import Video from "../models/Video";
+import User from "../models/User";
 
 const HTTP_NOT_FOUND = 404;
 
@@ -9,16 +11,22 @@ export const home = async (_, res) => {
 
 export const watch = async (req, res) => {
     const { params: { id } } = req;
-    const video = await Video.findById(id);
-    if (video === null) {
+    const video = await Video.findById(id).populate("owner");
+    console.log(video);
+    if (!video) {
         return res.status(HTTP_NOT_FOUND).render("404", { pageTitle: "Video not found" });
     };
     return res.render("watch", { pageTitle: video.title, video });
 };
 
 export const getEdit = async (req, res) => {
-    const { params: { id } } = req;
+    const {
+        params: { id },
+        session: { user: { _id: me } } } = req;
     const video = await Video.findById(id);
+    if (String(video.owner) !== String(me)) {
+        return res.status(403).redirect("/");
+    };
     if (!video) {
         return res.status(HTTP_NOT_FOUND).render("404", { pageTitle: "Video not found" });
     };
@@ -26,11 +34,16 @@ export const getEdit = async (req, res) => {
 };
 
 export const postEdit = async (req, res) => {
-    const { params: { id } } = req;
+    const {
+        params: { id },
+        session: { user: { _id: me } } } = req;
+    const video = await Video.findById(id);
     const { title, description, hashtags } = req.body;
-    const video = await Video.exists({ _id: id });
     if (!video) {
         return res.status(HTTP_NOT_FOUND).render("404", { pageTitle: "Video not found" });
+    };
+    if (String(video.owner) !== String(me)) {
+        return res.status(403).redirect("/");
     };
 
     await Video.findByIdAndUpdate(id, {
@@ -46,14 +59,23 @@ export const getUpload = (_, res) => {
 };
 
 export const postUpload = async (req, res) => {
-    const { body: { title, description, hashtags } } = req;
+    const {
+        session: { user: { _id: owner } },
+        file: { path: fileUrl },
+        body: { title, description, hashtags }
+    } = req;
+
     try {
-        const video = new Video({
+        const newVideo = await Video.create({
             title,
             description,
+            fileUrl,
+            owner,
             hashtags: Video.formatHashtags(hashtags),
         });
-        await video.save();
+        const user = await User.findById(owner);
+        user.videos.push(newVideo._id);
+        user.save();
         return res.redirect("/");
     } catch (error) {
         return res.render("upload", {
@@ -63,7 +85,17 @@ export const postUpload = async (req, res) => {
     }
 };
 export const deleteVideo = async (req, res) => {
-    const { params: { id } } = req;
+    const {
+        params: { id },
+        session: { user: { _id: me } }
+    } = req;
+    const video = await Video.findById(id);
+    if (!video) {
+        return res.status(HTTP_NOT_FOUND).render("404", { pageTitle: "Video not found" });
+    };
+    if (String(video.owner) !== String(me)) {
+        return res.status(403).redirect("/");
+    };
     await Video.findByIdAndDelete(id);
     return res.redirect("/");
 };

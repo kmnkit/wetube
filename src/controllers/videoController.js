@@ -5,14 +5,13 @@ import User from "../models/User";
 const HTTP_NOT_FOUND = 404;
 
 export const home = async (_, res) => {
-    const videos = await Video.find({}).sort({ createdAt: "desc" });
+    const videos = await Video.find({}).sort({ createdAt: "desc" }).populate('owner');
     return res.render("home", { pageTitle: "Home", videos });
 };
 
 export const watch = async (req, res) => {
     const { params: { id } } = req;
     const video = await Video.findById(id).populate("owner");
-    console.log(video);
     if (!video) {
         return res.status(HTTP_NOT_FOUND).render("404", { pageTitle: "Video not found" });
     };
@@ -108,7 +107,7 @@ export const search = async (req, res) => {
             title: {
                 $regex: new RegExp(`${keyword}$`, "i")
             },
-        });
+        }).populate('owner');
     }
     return res.render("search", { pageTitle: "Search", videos });
 };

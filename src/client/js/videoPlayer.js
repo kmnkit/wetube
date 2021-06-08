@@ -15,13 +15,13 @@ let controlsMovementTimeout = null;
 let volumeValue = 0.5;
 video.volume = volumeValue;
 
-const handlePlayClick = (e) => {
+const handlePlayClick = () => {
   if (video.paused) {
     video.play();
   } else {
     video.pause();
   }
-  playBtn.className = video.paused ? "fas fa-2x fa-play-circle" : "fas fa-2x fa-pause-circle"
+  playBtn.className = video.paused ? "fas fa-2x fa-play-circle" : "fas fa-2x fa-pause-circle";
 }
 
 const handleMute = () => {
@@ -101,18 +101,19 @@ const handleMouseLeave = () => {
 
 const videoClick = (e) => handlePlayClick();
 
-const endedHandler = () => (playBtn.className = "fas fa-play-circle fa-2x");
+const handleEnded = () => playBtn.className = "fas fa-play-circle fa-2x";
+
+const handleView = () => {
+  const { id } = videoContainer.dataset;
+  fetch(`/api/videos/${id}/view`, { method: "POST" });
+}
 
 const keyupHandler = (event) => {
   const { keyCode } = event;
-  switch (keyCode) {
-    case 32: // Space
-      handlePlayClick();
-      break;
-    case 70: // f
-      handleFullscreen();
-    default:
-      break;
+  if (keyCode === 32) {
+    handlePlayClick();
+  } else if (keyCode === 70) {
+    handleFullscreen();
   }
 }
 
@@ -126,6 +127,7 @@ video.addEventListener("loadedmetadata", handleLoadedMetadata);
 video.addEventListener("timeupdate", handleTimeUpdate);
 video.addEventListener("mousemove", handleMouseMove);
 video.addEventListener("mouseleave", handleMouseLeave);
-video.addEventListener("ended", endedHandler);
+video.addEventListener("ended", handleEnded);
+video.addEventListener("ended", handleView);
 video.addEventListener("click", videoClick);
 document.addEventListener("keyup", keyupHandler);

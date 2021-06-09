@@ -13,7 +13,6 @@ const handleDownload = async () => {
     ffmpeg.FS("writeFile", "recording.webm", await fetchFile(videoFile));
 
     await ffmpeg.run("-i", "recording.webm", "-r", "60", "output.mp4");
-
     await ffmpeg.run("-i", "recording.webm", "-ss", "00:00:01", "-frames:v", "1", "thumbnail.jpg");
 
     const mp4File = ffmpeg.FS("readFile", "output.mp4");
@@ -36,6 +35,14 @@ const handleDownload = async () => {
     thumbA.download = "thumbnail.jpg";
     document.body.appendChild(thumbA);
     thumbA.click();
+
+    ffmpeg.FS("unlink", "recording.webm");
+    ffmpeg.FS("unlink", "output.mp4");
+    ffmpeg.FS("unlink", "thumbnail.jpg");
+
+    URL.revokeObjectURL(mp4Url);
+    URL.revokeObjectURL(thumbUrl);
+    URL.revokeObjectURL(videoFile);
 }
 
 const handleStop = () => {

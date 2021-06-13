@@ -9,6 +9,7 @@ const timeline = document.getElementById("timeline");
 const fullScreenBtn = document.getElementById("fullScreen");
 const videoContainer = document.getElementById("videoContainer");
 const videoControls = document.getElementById('videoControls');
+const textarea = document.querySelector("textarea");
 
 let controlsTimeout = null;
 let controlsMovementTimeout = null;
@@ -68,6 +69,7 @@ const handleTimelineChange = (event) => {
 }
 
 const handleFullscreen = () => {
+  video.focus();
   const fullscreen = document.fullscreenElement;
   if (fullscreen) {
     document.exitFullscreen();
@@ -108,14 +110,15 @@ const handleView = () => {
   fetch(`/api/videos/${id}/view`, { method: "POST" });
 }
 
-const keyupHandler = (event) => {
-  const { keyCode } = event;
-  if (keyCode === 32) {
+const handleKeyDown = (event) => {
+  if (event.target === textarea) return;
+  const { which } = event;
+  if (which === 32) {
     handlePlayClick();
-  } else if (keyCode === 70) {
+  } else if (which === 70) {
     handleFullscreen();
-  }
-}
+  };
+};
 
 playBtn.addEventListener("click", handlePlayClick);
 soundBtn.addEventListener("click", handleMute);
@@ -130,4 +133,4 @@ video.addEventListener("mouseleave", handleMouseLeave);
 video.addEventListener("ended", handleEnded);
 video.addEventListener("ended", handleView);
 video.addEventListener("click", videoClick);
-document.addEventListener("keyup", keyupHandler);
+document.addEventListener("keydown", handleKeyDown);

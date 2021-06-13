@@ -1,0 +1,7 @@
+mixin commentBox(comment,calculateNumOfDays)
+    div#comment__container
+        img#avatar__box(src="/"+comment.author.avatarUrl)
+        div#comment__box
+            span#author__name #{comment.author.name}
+            span=calculateNumOfDays(comment.createdAt)
+            p#comment__text=comment.text

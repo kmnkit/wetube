@@ -1,0 +1,45 @@
+.video__comments{
+    margin-top: 10px;
+}
+#commentForm{
+    textarea{
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    #button__area{
+        display: flex;
+        justify-content:flex-end;
+    }
+    button {
+        background-color:#3EA6FF;
+        width: 100px;
+        height: 30px;
+        border-radius: 5px;
+        border-style:none;
+        outline: none;
+    }
+}
+#comment__container{
+    display:flex;
+    height: 130px;
+    span{
+        font-size: 12px;
+    }
+    p{
+        font-size:11px;
+    }
+}
+#avatar__box{
+    border-radius: 100%;
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+#author__name {
+    font-weight:bold;
+    margin-right:3px;
+}
+#comment__text{
+    margin-top: 5px;
+}

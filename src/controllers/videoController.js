@@ -1,21 +1,38 @@
 import { compareSync } from "bcrypt";
 import Video from "../models/Video";
+import Comment from "../models/Comment";
 import User from "../models/User";
 
 const HTTP_NOT_FOUND = 404;
 
 export const home = async (_, res) => {
     const videos = await Video.find({}).sort({ createdAt: "desc" }).populate('owner');
+    console.log(videos);
     return res.render("home", { pageTitle: "Home", videos });
 };
+
+const calculateNumOfDays = (day) => {
+    const today = new Date();
+    const value = new Date(day);
+    const betweenTime = Math.floor((today.getTime() - value.getTime()) / 1000 / 60);
+    if (betweenTime < 1) return '방금전';
+    if (betweenTime < 60) return `${betweenTime}분전`;
+    const betweenTimeHour = Math.floor(betweenTime / 60);
+    if (betweenTimeHour < 24) return `${betweenTimeHour}시간전`;
+    const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
+    if (betweenTimeDay < 365) return `${betweenTimeDay}일전`;
+    return `${Math.floor(betweenTimeDay / 365)}년전`;
+}
 
 export const watch = async (req, res) => {
     const { params: { id } } = req;
     const video = await Video.findById(id).populate("owner");
+    console.info(video);
+    const comments = await Comment.find({ where: video.comments._id }).sort({ createdAt: "desc" }).populate('author');
     if (!video) {
         return res.status(HTTP_NOT_FOUND).render("404", { pageTitle: "Video not found" });
     };
-    return res.render("watch", { pageTitle: video.title, video });
+    return res.render("watch", { pageTitle: video.title, video, comments, calculateNumOfDays });
 };
 
 export const getEdit = async (req, res) => {
@@ -30,7 +47,7 @@ export const getEdit = async (req, res) => {
     if (!video) {
         return res.status(HTTP_NOT_FOUND).render("404", { pageTitle: "Video not found" });
     };
-    return res.render("edit", { pageTitle: `Edit ${video.title}`, video });
+    return res.render("edit", { pageTitle: `Edit ${video.title} `, video });
 };
 
 export const postEdit = async (req, res) => {
@@ -53,7 +70,7 @@ export const postEdit = async (req, res) => {
         hashtags: Video.formatHashtags(hashtags),
     });
     req.flash("success", "Edit Successed");
-    return res.redirect(`/videos/${id}`);
+    return res.redirect(`/ videos / ${id} `);
 };
 
 export const getUpload = (_, res) => {
@@ -111,7 +128,7 @@ export const search = async (req, res) => {
     if (keyword) {
         videos = await Video.find({
             title: {
-                $regex: new RegExp(`${keyword}$`, "i")
+                $regex: new RegExp(`${keyword} $`, "i")
             },
         }).populate('owner');
     }
@@ -129,8 +146,20 @@ export const registerView = async (req, res) => {
     return res.sendStatus(200);
 }
 
-export const createComment = (req, res) => {
-    console.log(req.params);
-    console.log(req.body);
-    return res.end();
-}
+export const createComment = async (req, res) => {
+    const {
+        params: { id: video },
+        body: { text },
+        session: { user }
+    } = req;
+    const videoObj = await Video.findById(video);
+    if (!videoObj) return res.sendStatus(404);
+    const comment = await Comment.create({
+        text,
+        video,
+        author: user._id,
+    });
+    videoObj.comments.push(comment._id);
+    videoObj.save();
+    return res.sendStatus(201);
+};

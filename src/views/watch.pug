@@ -1,4 +1,5 @@
 extends base
+include mixins/comment
 
 block content
     div#videoContainer(data-id=video._id)
@@ -15,14 +16,17 @@ block content
             input(type="range",step="0.1", value=0.5, min="0", max="1")#volume
             div#expand
                 i#fullScreen.fas.fa-2x.fa-expand
-    //-
+    
         div
-            p=video.description
-            small=video.createdAt
-        div
-            small Uploaded by 
+            p#video__title=video.description
+            span 조회수 #{video.meta.views} • #{video.createdAt.getFullYear()}. #{video.createdAt.getMonth()}. #{video.createdAt.getDate()}
+        hr
+        div#author__container
+            div
+                img#avatar__box(src="/"+video.owner.avatarUrl)
+            div
                 a(href=`/users/${video.owner._id}`)=video.owner.name
-        h3 #{video.meta.views} #{video.meta.views === 1? "view":"views"}
+                p #{video.description}
         if String(loggedInUser._id) === String(video.owner._id)
             a(href=`${video.id}/edit`) Edit Video &rarr;
             br
@@ -31,7 +35,12 @@ block content
         div.video__comments
             form.video__comment-form#commentForm
                 textarea(cols="30", rows="10", placeholder="Write a nice comment...")
-                button Add a comment
+                div#button__area
+                    button 댓글
+    span 댓글 #{comments.length}개
+    div.video__comments
+        each comment in comments
+            +commentBox(comment,calculateNumOfDays)
 block scripts 
     script(src="/static/js/videoPlayer.js")
     if loggedIn

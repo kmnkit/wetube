@@ -1,5 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
+import flash from 'express-flash';
 import userRouter from './routers/userRouter';
 import videoRouter from './routers/videoRouter';
 import rootRouter from './routers/rootRouter';
@@ -23,6 +24,7 @@ app.use(
         store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
     })
 );
+app.use(flash());
 app.use(localsMiddleware);
 app.use("/uploads", express.static("uploads"));
 app.use("/static", express.static("assets"));

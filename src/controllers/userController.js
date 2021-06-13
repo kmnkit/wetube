@@ -70,7 +70,7 @@ export const postLogin = async (req, res) => {
     };
     req.session.loggedIn = true;
     req.session.user = user;
-    res.redirect("/");
+    return res.redirect("/");
 };
 
 export const startGithubLogin = (req, res) => {
@@ -121,6 +121,7 @@ export const finishGithubLogin = async (req, res) => {
             (email) => email.primary === true && email.verified === true);
 
         if (!emailObj) {
+            req.flash("error", "Can't finish Github Login.");
             return res.redirect("/login");
         }
         const user = await User.findOne({ email: emailObj.email });
@@ -188,13 +189,15 @@ export const edit = (req, res) => res.render("edit");
 
 export const logout = (req, res) => {
     req.session.destroy();
+    req.flash("info", "Bye Bye");
     return res.redirect("/");
 };
 
 export const getChangePassword = (req, res) => {
     if (req.session.user.socialOnly === true) {
+        req.flash("error", "Can't change password.");
         return res.redirect("/");
-    }
+    };
     return res.render("users/change-password", { pageTitle: "Change Password" })
 }
 
@@ -208,12 +211,14 @@ export const postChangePassword = async (req, res) => {
     const user = await User.findById(_id);
     const ok = await bcrypt.compare(oldPassword, user.password);
     if (!ok) {
+        req.flash("error", "Can't change password.");
         return res.status(400).render("users/change-password", {
             pageTitle: "Change Password",
             errorMessage: "The current password is incorrect.",
         });
     }
     if (newPassword !== newPasswordConfirmation) {
+        req.flash("error", "Can't change password.");
         return res.status(400).render("users/change-password", {
             pageTitle: "Change Password",
             errorMessage: "The new password does not match the confirmation",
@@ -221,6 +226,7 @@ export const postChangePassword = async (req, res) => {
     }
     user.password = newPassword;
     await user.save();
+    req.flash("info", "Password Updated");
     req.session.user.password = user.password;
     return res.redirect("/users/logout");
 }

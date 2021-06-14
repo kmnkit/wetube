@@ -1,13 +1,14 @@
 const videoContainer = document.getElementById("videoContainer");
 const form = document.getElementById("commentForm");
+const delBtns = document.querySelectorAll("#btn__comment-del>button");
 
-const handleSubmit = (event) => {
+const handleSubmit = async (event) => {
     event.preventDefault();
     const { dataset: { id: videoId } } = videoContainer;
     const textarea = form.querySelector("textarea");
     const text = textarea.value;
     if (text === "") return;
-    fetch(`/api/videos/${videoId}/comment`, {
+    await fetch(`/api/videos/${videoId}/comment`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -15,8 +16,24 @@ const handleSubmit = (event) => {
         body: JSON.stringify({ text }),
     });
     textarea.value = "";
+    window.location.reload();
 };
 
 if (form) {
     form.addEventListener("submit", handleSubmit);
 };
+
+const handleDelBtn = async (event) => {
+    event.preventDefault();
+    const { dataset: { id: commentId } } = event.target;
+    await fetch(`/api/comment/${commentId}/delete`, {
+        method: "GET",
+    });
+    window.location.reload();
+}
+
+const init = () => {
+    delBtns.forEach(btn => btn.addEventListener("click", handleDelBtn));
+}
+
+init();

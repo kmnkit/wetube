@@ -7,7 +7,6 @@ const HTTP_NOT_FOUND = 404;
 
 export const home = async (_, res) => {
     const videos = await Video.find({}).sort({ createdAt: "desc" }).populate('owner');
-    console.log(videos);
     return res.render("home", { pageTitle: "Home", videos });
 };
 
@@ -27,7 +26,6 @@ const calculateNumOfDays = (day) => {
 export const watch = async (req, res) => {
     const { params: { id } } = req;
     const video = await Video.findById(id).populate("owner");
-    console.info(video);
     const comments = await Comment.find({ where: video.comments._id }).sort({ createdAt: "desc" }).populate('author');
     if (!video) {
         return res.status(HTTP_NOT_FOUND).render("404", { pageTitle: "Video not found" });
@@ -162,4 +160,30 @@ export const createComment = async (req, res) => {
     videoObj.comments.push(comment._id);
     videoObj.save();
     return res.sendStatus(201);
+};
+
+export const updateComment = async (req, res) => {
+    const {
+        params: { id: video },
+        body: { text },
+        session: { user }
+    } = req;
+    const videoObj = await Video.findById(video);
+    if (!videoObj) return res.sendStatus(404);
+    const comment = await Comment.create({
+        text,
+        video,
+        author: user._id,
+    });
+    videoObj.comments.push(comment._id);
+    videoObj.save();
+    return res.sendStatus(201);
+};
+
+export const deleteComment = async (req, res) => {
+    const {
+        params: { commentId: comment },
+    } = req;
+    await Comment.findByIdAndDelete(comment);
+    return res.sendStatus(200);
 };

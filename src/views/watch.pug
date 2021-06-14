@@ -23,7 +23,10 @@ block content
         hr
         div#author__container
             div
-                img#avatar__box(src="/"+video.owner.avatarUrl)
+                if video.owner.avatarUrl
+                    img#avatar__box(src="/"+video.owner.avatarUrl)
+                else
+                    span 😍
             div
                 a(href=`/users/${video.owner._id}`)=video.owner.name
                 p #{video.description}
@@ -40,7 +43,7 @@ block content
     span 댓글 #{comments.length}개
     div.video__comments
         each comment in comments
-            +commentBox(comment,calculateNumOfDays)
+            +commentBox(comment,calculateNumOfDays,video.id)
 block scripts 
     script(src="/static/js/videoPlayer.js")
     if loggedIn

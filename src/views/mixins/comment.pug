@@ -1,7 +1,26 @@
-mixin commentBox(comment,calculateNumOfDays)
-    div#comment__container
-        img#avatar__box(src="/"+comment.author.avatarUrl)
+mixin commentBox(comment,calculateNumOfDays,videoId)
+    div#comment__container(data-id=comment.id)
+        if comment.author.avatarUrl
+            img#avatar__box(src="/"+comment.author.avatarUrl)
+        else
+            span#no-avatar 😍
         div#comment__box
-            span#author__name #{comment.author.name}
-            span=calculateNumOfDays(comment.createdAt)
-            p#comment__text=comment.text
+            div
+                span#author__name #{comment.author.name}
+                span=calculateNumOfDays(comment.createdAt)
+                p#comment__text=comment.text
+            div#comment__menu
+                button
+                    i.fas.fa-ellipsis-v
+                div.dropdown
+                    if String(loggedInUser._id) === String(comment.author._id)
+                        div#btn__comment-edit
+                            i.fas.fa-pencil-alt
+                            button(data-id=comment._id) 수정
+                        div#btn__comment-del
+                            i.fas.fa-trash-alt
+                            button(data-id=comment._id) 삭제
+                    else
+                        div
+                            i.fas.fa-flag
+                            a(href="#") 신고

@@ -24,7 +24,10 @@ block content
         div#author__container
             div
                 if video.owner.avatarUrl
-                    img#avatar__box(src="/"+video.owner.avatarUrl)
+                    if video.owner.socialOnly
+                        img#avatar__box(src=video.owner.avatarUrl)
+                    else
+                        img#avatar__box(src="/"+video.owner.avatarUrl)
                 else
                     span 😍
             div

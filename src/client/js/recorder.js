@@ -36,7 +36,6 @@ const handleDownload = async () => {
 
     const mp4File = ffmpeg.FS("readFile", files.output);
     const thumbFile = ffmpeg.FS("readFile", files.thumb);
-    console.info('thumbnail read File Done');
 
     const mp4Blob = new Blob([mp4File.buffer], { type: "video/mp4" });
     const thumbBlob = new Blob([thumbFile.buffer], { type: "image/jpg" });

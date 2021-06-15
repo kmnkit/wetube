@@ -24,10 +24,7 @@ block content
         div#author__container
             div
                 if video.owner.avatarUrl
-                    if video.owner.avatarUrl.includes("github")
-                        img#avatar__box(src=video.owner.avatarUrl)
-                    else
-                        img#avatar__box(src="/"+video.owner.avatarUrl)
+                    img#avatar__box(src=video.owner.avatarUrl)
                 else
                     span 😍
             div

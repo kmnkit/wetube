@@ -61,11 +61,10 @@
     }
 }
 
-#comment__box{
-    display: flex;
-    width: 100%;
+#comment__box,#author__container{
+    display: flex;    
     justify-content: space-between;
-    #comment__menu{
+    #comment__menu,#video__owner-menu{
         overflow: hidden;
         >button{
             background-color: $bg;
@@ -84,6 +83,9 @@
         }
     }
 }
+#comment__box{
+    width: 100%;
+}
 #avatar__box{
     border-radius: 100%;
     width: 50px;
@@ -100,4 +102,9 @@
 }
 span#no-avatar{
     font-size: 50px;
+}
+
+.smile{
+    font-size: 50px !important;
+    margin-right: 10px;
 }

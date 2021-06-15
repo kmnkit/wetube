@@ -25,12 +25,11 @@ const calculateNumOfDays = (day) => {
 
 export const watch = async (req, res) => {
     const { params: { id } } = req;
-    const video = await Video.findById(id).populate("owner");
-    const comments = await Comment.find({ where: video.comments._id }).sort({ createdAt: "desc" }).populate('author');
+    const video = await Video.findById(id).populate("owner").populate('comments');
     if (!video) {
         return res.status(HTTP_NOT_FOUND).render("404", { pageTitle: "Video not found" });
     };
-    return res.render("watch", { pageTitle: video.title, video, comments, calculateNumOfDays });
+    return res.render("watch", { pageTitle: video.title, video, calculateNumOfDays });
 };
 
 export const getEdit = async (req, res) => {

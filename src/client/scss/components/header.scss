@@ -32,4 +32,13 @@ header {
     height: 40px;
     border-radius: 50%;
   }
+
+  .smile{
+    font-size: 30px;
+    margin-right: 10px;
+    &.big{
+      font-size: 50px;
+    }
+  }
+
 }

@@ -1,9 +1,12 @@
 mixin commentBox(comment,calculateNumOfDays,videoId)
     div#comment__container(data-id=comment.id)
         if comment.author.avatarUrl
-            img#avatar__box(src="/"+comment.author.avatarUrl)
+            if isHeroku
+                img#avatar__box(src=comment.author.avatarUrl)
+            else
+                img#avatar__box(src="/"+comment.author.avatarUrl)
         else
-            span#no-avatar 😍
+            span.smile 😍
         div#comment__box
             div
                 span#author__name #{comment.author.name}

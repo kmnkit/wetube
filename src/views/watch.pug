@@ -3,7 +3,10 @@ include mixins/comment
 
 block content
     div#videoContainer(data-id=video._id)
-        video(src=`/${video.fileUrl}`).compressed
+        if isHeroku
+            video(src=`${video.fileUrl}`).compressed
+        else
+            video(src=`/${video.fileUrl}`).compressed
         div#videoControls
             i#playPause.fas.fa-2x.fa-play-circle
             div
